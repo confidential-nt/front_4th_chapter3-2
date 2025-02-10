@@ -108,3 +108,69 @@ export function formatDate(currentDate: Date, day?: number) {
     fillZero(day ?? currentDate.getDate()),
   ].join('-');
 }
+
+export function getRepeatRules(date: Date, frequency: 'monthly' | 'yearly'): string[] {
+  const year = date.getFullYear();
+  const month = date.getMonth(); // 0-based index
+  const day = date.getDate();
+  const dayOfWeek = date.getDay(); // 0 (일) ~ 6 (토)
+
+  const isLeapYear = (y: number) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+  const lastDay = new Date(year, month + 1, 0).getDate();
+
+  const weekOfMonth = Math.floor((day - 1) / 7) + 1; // 몇 번째 주인지
+  const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+
+  // 마지막 해당 요일 찾기
+  function getLastWeekdayOfMonth(m: number, y: number, targetDayOfWeek: number): number {
+    let lastDate = new Date(y, m + 1, 0); // 해당 월의 마지막 날
+    while (lastDate.getDay() !== targetDayOfWeek) {
+      lastDate.setDate(lastDate.getDate() - 1);
+    }
+    return lastDate.getDate();
+  }
+
+  const lastWeekday = getLastWeekdayOfMonth(month, year, dayOfWeek);
+
+  // 윤년 2월 29일 처리
+  if (month === 1 && day === 29 && isLeapYear(year)) {
+    return frequency === 'monthly'
+      ? [
+          `매월 29일`,
+          `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+          `매월 마지막 ${weekdays[dayOfWeek]}`,
+          `매월 마지막 날`,
+        ]
+      : [
+          `매년 2월 29일`,
+          `매년 2월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+          `매년 2월 마지막 ${weekdays[dayOfWeek]}`,
+          `매년 2월 마지막 날`,
+        ];
+  }
+
+  // 31일 처리
+  if (day === 31) {
+    return frequency === 'monthly'
+      ? [
+          `매월 31일`,
+          `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+          `매월 마지막 ${weekdays[dayOfWeek]}`,
+          `매월 마지막 날`,
+        ]
+      : [
+          `매년 ${month + 1}월 31일`,
+          `매년 ${month + 1}월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+          `매년 ${month + 1}월 마지막 ${weekdays[dayOfWeek]}`,
+          `매년 ${month + 1}월 마지막 날`,
+        ];
+  }
+
+  // 일반적인 날짜 처리
+  return frequency === 'monthly'
+    ? [`매월 ${day}일`, `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`]
+    : [
+        `매년 ${month + 1}월 ${day}일`,
+        `매년 ${month + 1}월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+      ];
+}

@@ -6,6 +6,7 @@ import {
   formatWeek,
   getDaysInMonth,
   getEventsForDay,
+  getRepeatRules,
   getWeekDates,
   getWeeksAtMonth,
   isDateInRange,
@@ -296,5 +297,57 @@ describe('formatDate', () => {
   it('일이 한 자리 수일 때 앞에 0을 붙여 포맷팅한다', () => {
     const testDate = new Date('2023-12-05');
     expect(formatDate(testDate)).toBe('2023-12-05');
+  });
+});
+
+describe('getRepeatRules', () => {
+  it('매월 2024년 2월 29일 기준', () => {
+    expect(getRepeatRules(new Date('2024-02-29'), 'monthly')).toEqual([
+      '매월 29일',
+      '매월 5번째 목요일',
+      '매월 마지막 목요일',
+      '매월 마지막 날',
+    ]);
+  });
+
+  it('매년 2024년 2월 29일 기준', () => {
+    expect(getRepeatRules(new Date('2024-02-29'), 'yearly')).toEqual([
+      '매년 2월 29일',
+      '매년 2월 5번째 목요일',
+      '매년 2월 마지막 목요일',
+      '매년 2월 마지막 날',
+    ]);
+  });
+
+  it('매월 2024년 3월 31일 기준', () => {
+    expect(getRepeatRules(new Date('2024-03-31'), 'monthly')).toEqual([
+      '매월 31일',
+      '매월 5번째 일요일',
+      '매월 마지막 일요일',
+      '매월 마지막 날',
+    ]);
+  });
+
+  it('매년 2024년 3월 31일 기준', () => {
+    expect(getRepeatRules(new Date('2024-03-31'), 'yearly')).toEqual([
+      '매년 3월 31일',
+      '매년 3월 5번째 일요일',
+      '매년 3월 마지막 일요일',
+      '매년 3월 마지막 날',
+    ]);
+  });
+
+  it('매월 그 외 날짜 기준', () => {
+    expect(getRepeatRules(new Date('2024-02-17'), 'monthly')).toEqual([
+      '매월 17일',
+      '매월 3번째 토요일',
+    ]);
+  });
+
+  it('매년 그 외 날짜 기준', () => {
+    expect(getRepeatRules(new Date('2024-02-17'), 'yearly')).toEqual([
+      '매년 2월 17일',
+      '매년 2월 3번째 토요일',
+    ]);
   });
 });
