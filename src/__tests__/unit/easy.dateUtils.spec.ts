@@ -114,7 +114,7 @@ describe('getEventsForDay', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rules: [] },
       notificationTime: 0,
     },
     {
@@ -126,7 +126,7 @@ describe('getEventsForDay', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rules: [] },
       notificationTime: 0,
     },
     {
@@ -138,7 +138,7 @@ describe('getEventsForDay', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rules: [] },
       notificationTime: 0,
     },
   ];

@@ -1,8 +1,10 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
+import { http, HttpResponse } from 'msw';
 
 import App from '../App';
-import { setup } from './rtl-utils';
-import { s } from 'framer-motion/client';
+import { server } from '../setupTests';
+import { saveScheduleWithRepeat, setup } from './rtl-utils';
+import { setupMockHandlerCreation, setupMockHandlerUpdating } from '../__mocks__/handlersUtils';
 
 describe('반복 유형 선택', () => {
   it('사용자는 일정 생성 또는 수정 시 반복 유형을 선택할 수 있다.', async () => {
@@ -42,7 +44,7 @@ describe('반복 유형 선택', () => {
     }
 
     const repeatTypeSelect = screen.getByLabelText('반복 유형');
-    await user.selectOptions(repeatTypeSelect, '매월');
+    await user.selectOptions(repeatTypeSelect, 'monthly');
 
     const repeatRuleSelect = (await screen.findByLabelText('반복 규칙')) as HTMLSelectElement;
     const repeatRuleOptions = Array.from(repeatRuleSelect.options).map(
@@ -72,7 +74,7 @@ describe('반복 유형 선택', () => {
     }
 
     const repeatTypeSelect = screen.getByLabelText('반복 유형');
-    await user.selectOptions(repeatTypeSelect, '매년');
+    await user.selectOptions(repeatTypeSelect, 'yearly');
 
     const repeatRuleSelect = (await screen.findByLabelText('반복 규칙')) as HTMLSelectElement;
     const repeatRuleOptions = Array.from(repeatRuleSelect.options).map(
@@ -102,7 +104,7 @@ describe('반복 유형 선택', () => {
     }
 
     const repeatTypeSelect = screen.getByLabelText('반복 유형');
-    await user.selectOptions(repeatTypeSelect, '매월');
+    await user.selectOptions(repeatTypeSelect, 'monthly');
 
     const repeatRuleSelect = (await screen.findByLabelText('반복 규칙')) as HTMLSelectElement;
     const repeatRuleOptions = Array.from(repeatRuleSelect.options).map(
@@ -132,7 +134,7 @@ describe('반복 유형 선택', () => {
     }
 
     const repeatTypeSelect = screen.getByLabelText('반복 유형');
-    await user.selectOptions(repeatTypeSelect, '매년');
+    await user.selectOptions(repeatTypeSelect, 'yearly');
 
     const repeatRuleSelect = (await screen.findByLabelText('반복 규칙')) as HTMLSelectElement;
     const repeatRuleOptions = Array.from(repeatRuleSelect.options).map(
@@ -162,7 +164,7 @@ describe('반복 유형 선택', () => {
     }
 
     const repeatTypeSelect = screen.getByLabelText('반복 유형');
-    await user.selectOptions(repeatTypeSelect, '매월');
+    await user.selectOptions(repeatTypeSelect, 'monthly');
 
     const repeatRuleSelect = (await screen.findByLabelText('반복 규칙')) as HTMLSelectElement;
     const repeatRuleOptions = Array.from(repeatRuleSelect.options).map(
@@ -187,7 +189,7 @@ describe('반복 유형 선택', () => {
     }
 
     const repeatTypeSelect = screen.getByLabelText('반복 유형');
-    await user.selectOptions(repeatTypeSelect, '매년');
+    await user.selectOptions(repeatTypeSelect, 'yearly');
 
     const repeatRuleSelect = (await screen.findByLabelText('반복 규칙')) as HTMLSelectElement;
     const repeatRuleOptions = Array.from(repeatRuleSelect.options).map(
@@ -203,7 +205,7 @@ describe('반복 유형 선택', () => {
 });
 
 describe('반복 간격 설정', () => {
-  it('사용자는 반복 간격을 설정할 수 있다', async () => {
+  it('사용자는 반복 간격을 설정할 수 있다.', async () => {
     const { user } = setup(<App />);
 
     const repeatIntervalInput = screen.getByLabelText('반복 간격') as HTMLInputElement;
@@ -216,3 +218,120 @@ describe('반복 간격 설정', () => {
     expect(expected).toBe('3');
   });
 });
+
+describe.only('반복 일정 표시', () => {
+  it('캘린더 뷰에서 기존의 반복 일정이 반복 일정으로 표시된다.', async () => {
+    server.use(
+      http.get('/api/events', () => {
+        return HttpResponse.json({
+          events: [
+            {
+              id: 1,
+              title: '팀 회의',
+              date: '2024-10-15',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '주간 팀 미팅',
+              location: '회의실 A',
+              category: '업무',
+              repeat: { type: 'weekly', interval: 1 },
+              notificationTime: 10,
+            },
+          ],
+        });
+      })
+    );
+
+    setup(<App />);
+
+    const monthView = within(screen.getByTestId('month-view'));
+    const event = await monthView.findByLabelText('repeat-event');
+    expect(event).toBeInTheDocument();
+    const eventTitle = within(event).getByText('팀 회의');
+    expect(eventTitle).toBeInTheDocument();
+  });
+
+  it('기존의 일정 중에서 반복 일정이 아닌 경우, 반복 일정으로 표시되지 않는다.', async () => {
+    server.use(
+      http.get('/api/events', () => {
+        return HttpResponse.json({
+          events: [
+            {
+              id: 1,
+              title: '팀 회의',
+              date: '2024-10-15',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '주간 팀 미팅',
+              location: '회의실 A',
+              category: '업무',
+              repeat: { type: 'none', interval: 0 },
+              notificationTime: 10,
+            },
+          ],
+        });
+      })
+    );
+
+    setup(<App />);
+
+    await screen.findByText('일정 로딩 완료!');
+
+    const monthView = within(screen.getByTestId('month-view'));
+    const event = monthView.queryByLabelText('repeat-event');
+    expect(event).not.toBeInTheDocument();
+  });
+
+  it('사용자가 새로운 반복 일정을 추가 했다면, 해당 일정이 반복 일정으로 추가가 되어야한다.', async () => {
+    setupMockHandlerCreation([]);
+
+    const { user } = setup(<App />);
+
+    saveScheduleWithRepeat(user, {
+      title: '새로운 회의',
+      date: '2024-10-15',
+      startTime: '09:00',
+      endTime: '10:00',
+      description: '팀 미팅',
+      location: '회의실 B',
+      category: '업무',
+      repeat: { type: 'weekly', interval: 1, rules: [] },
+    });
+
+    const monthView = within(screen.getByTestId('month-view'));
+    const event = await monthView.findByLabelText('repeat-event');
+    expect(event).toBeInTheDocument();
+    const eventTitle = within(event).getByText('새로운 회의');
+    expect(eventTitle).toBeInTheDocument();
+  });
+
+  it('사용자가 기존의 일정을 반복 일정으로 수정한다면, 반복 일정으로 변경 되어야 한다.', async () => {
+    setupMockHandlerUpdating();
+
+    const { user } = setup(<App />);
+
+    const editButton = (await screen.findAllByLabelText('Edit event'))[1];
+    await user.click(editButton);
+
+    const checkbox = screen.getByLabelText('반복 일정') as HTMLInputElement;
+    if (!checkbox.checked) {
+      await user.click(checkbox);
+    }
+
+    await user.selectOptions(screen.getByLabelText('반복 유형'), 'monthly');
+
+    const repeatIntervalInput = screen.getByLabelText('반복 간격') as HTMLInputElement;
+    await user.clear(repeatIntervalInput);
+    await user.type(repeatIntervalInput, '1');
+
+    await user.click(screen.getByTestId('event-submit-button'));
+
+    const monthView = within(screen.getByTestId('month-view'));
+    const event = await monthView.findByLabelText('repeat-event');
+    expect(event).toBeInTheDocument();
+    const eventTitle = within(event).getByText('기존 회의');
+    expect(eventTitle).toBeInTheDocument();
+  });
+});
+
+// 반복일정이 올바른 간격으로 다 연속적으로 잘 표시가 되는지도 확인해야함...
