@@ -51,6 +51,7 @@ import {
   formatMonth,
   formatWeek,
   getEventsForDay,
+  getRepeatRules,
   getWeekDates,
   getWeeksAtMonth,
 } from './utils/dateUtils';
@@ -87,6 +88,8 @@ function App() {
     setIsRepeating,
     repeatType,
     setRepeatType,
+    repeatRules,
+    setRepeatRules,
     repeatInterval,
     setRepeatInterval,
     repeatEndDate,
@@ -151,6 +154,7 @@ function App() {
         type: isRepeating ? repeatType : 'none',
         interval: repeatInterval,
         endDate: repeatEndDate || undefined,
+        rules: repeatRules,
       },
       notificationTime,
     };
@@ -382,7 +386,14 @@ function App() {
                 <FormLabel>반복 유형</FormLabel>
                 <Select
                   value={repeatType}
-                  onChange={(e) => setRepeatType(e.target.value as RepeatType)}
+                  onChange={(e) => {
+                    setRepeatType(e.target.value as RepeatType);
+                    if (date && (e.target.value === 'monthly' || e.target.value === 'yearly')) {
+                      setRepeatRules(getRepeatRules(new Date(date), e.target.value));
+                    } else {
+                      setRepeatRules([]);
+                    }
+                  }}
                 >
                   <option value="daily">매일</option>
                   <option value="weekly">매주</option>
@@ -390,6 +401,16 @@ function App() {
                   <option value="yearly">매년</option>
                 </Select>
               </FormControl>
+              {repeatRules.length > 0 && (
+                <FormControl>
+                  <FormLabel>반복 규칙</FormLabel>
+                  <Select>
+                    {repeatRules.map((rule, index) => (
+                      <option key={index}>{rule}</option>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
               <HStack width="100%">
                 <FormControl>
                   <FormLabel>반복 간격</FormLabel>
@@ -559,6 +580,7 @@ function App() {
                       type: isRepeating ? repeatType : 'none',
                       interval: repeatInterval,
                       endDate: repeatEndDate || undefined,
+                      rules: repeatRules,
                     },
                     notificationTime,
                   });
