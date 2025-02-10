@@ -2,8 +2,9 @@ import { screen } from '@testing-library/react';
 
 import App from '../App';
 import { setup } from './rtl-utils';
+import { s } from 'framer-motion/client';
 
-describe.only('반복 유형 선택', () => {
+describe('반복 유형 선택', () => {
   it('사용자는 일정 생성 또는 수정 시 반복 유형을 선택할 수 있다.', async () => {
     const { user } = setup(<App />);
 
@@ -198,5 +199,20 @@ describe.only('반복 유형 선택', () => {
     expectedOptions.forEach((option) => {
       expect(repeatRuleOptions).toContain(option);
     });
+  });
+});
+
+describe('반복 간격 설정', () => {
+  it('사용자는 반복 간격을 설정할 수 있다', async () => {
+    const { user } = setup(<App />);
+
+    const repeatIntervalInput = screen.getByLabelText('반복 간격') as HTMLInputElement;
+
+    await user.clear(repeatIntervalInput);
+    await user.type(repeatIntervalInput, '3');
+
+    const expected = repeatIntervalInput.value;
+
+    expect(expected).toBe('3');
   });
 });
