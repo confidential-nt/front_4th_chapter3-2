@@ -262,6 +262,7 @@ function App() {
                           )}
                           {getEventsForDay(filteredEvents, day).map((event) => {
                             const isNotified = notifiedEvents.includes(event.id);
+                            const isRepeatEvent = event.repeat.type !== 'none';
                             return (
                               <Box
                                 key={event.id}
@@ -271,6 +272,7 @@ function App() {
                                 borderRadius="md"
                                 fontWeight={isNotified ? 'bold' : 'normal'}
                                 color={isNotified ? 'red.500' : 'inherit'}
+                                aria-label={isRepeatEvent ? 'repeat-event' : undefined}
                               >
                                 <HStack spacing={1}>
                                   {isNotified && <BellIcon />}
