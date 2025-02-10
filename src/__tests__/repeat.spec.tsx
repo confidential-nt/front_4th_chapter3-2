@@ -234,7 +234,7 @@ describe.only('반복 일정 표시', () => {
               description: '주간 팀 미팅',
               location: '회의실 A',
               category: '업무',
-              repeat: { type: 'weekly', interval: 1 },
+              repeat: { type: 'weekly', interval: 1, rules: [] },
               notificationTime: 10,
             },
           ],
@@ -265,7 +265,7 @@ describe.only('반복 일정 표시', () => {
               description: '주간 팀 미팅',
               location: '회의실 A',
               category: '업무',
-              repeat: { type: 'none', interval: 0 },
+              repeat: { type: 'none', interval: 0, rules: [] },
               notificationTime: 10,
             },
           ],
@@ -287,7 +287,7 @@ describe.only('반복 일정 표시', () => {
 
     const { user } = setup(<App />);
 
-    saveScheduleWithRepeat(user, {
+    await saveScheduleWithRepeat(user, {
       title: '새로운 회의',
       date: '2024-10-15',
       startTime: '09:00',
@@ -318,9 +318,15 @@ describe.only('반복 일정 표시', () => {
       await user.click(checkbox);
     }
 
+    const titleInput = screen.getByLabelText('제목');
+
+    await user.clear(titleInput);
+    await user.type(titleInput, '수정된 회의');
+
     await user.selectOptions(screen.getByLabelText('반복 유형'), 'monthly');
 
     const repeatIntervalInput = screen.getByLabelText('반복 간격') as HTMLInputElement;
+
     await user.clear(repeatIntervalInput);
     await user.type(repeatIntervalInput, '1');
 
@@ -329,7 +335,7 @@ describe.only('반복 일정 표시', () => {
     const monthView = within(screen.getByTestId('month-view'));
     const event = await monthView.findByLabelText('repeat-event');
     expect(event).toBeInTheDocument();
-    const eventTitle = within(event).getByText('기존 회의');
+    const eventTitle = within(event).getByText('수정된 회의');
     expect(eventTitle).toBeInTheDocument();
   });
 });
