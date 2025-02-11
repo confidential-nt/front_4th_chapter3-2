@@ -56,6 +56,7 @@ import {
   getWeeksAtMonth,
 } from './utils/dateUtils';
 import { findOverlappingEvents } from './utils/eventOverlap';
+import { getExpandedEventsForMonth } from './utils/eventUtils.ts';
 import { getTimeErrorMessage } from './utils/timeValidation';
 
 const categories = ['업무', '개인', '가족', '기타'];
@@ -224,6 +225,8 @@ function App() {
   const renderMonthView = () => {
     const weeks = getWeeksAtMonth(currentDate);
 
+    const expandedEvents = getExpandedEventsForMonth(events, currentDate);
+
     return (
       <VStack data-testid="month-view" align="stretch" w="full" spacing={4}>
         <Heading size="md">{formatMonth(currentDate)}</Heading>
@@ -260,7 +263,7 @@ function App() {
                               {holiday}
                             </Text>
                           )}
-                          {getEventsForDay(filteredEvents, day).map((event) => {
+                          {getEventsForDay(expandedEvents, day).map((event) => {
                             const isNotified = notifiedEvents.includes(event.id);
                             const isRepeatEvent = event.repeat.type !== 'none';
                             return (
@@ -268,7 +271,9 @@ function App() {
                                 key={event.id}
                                 p={1}
                                 my={1}
-                                bg={isNotified ? 'red.100' : 'gray.100'}
+                                bg={
+                                  isNotified ? 'red.100' : isRepeatEvent ? 'green.100' : 'gray.100'
+                                }
                                 borderRadius="md"
                                 fontWeight={isNotified ? 'bold' : 'normal'}
                                 color={isNotified ? 'red.500' : 'inherit'}

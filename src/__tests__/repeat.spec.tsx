@@ -246,9 +246,9 @@ describe('반복 일정 표시', () => {
     setup(<App />);
 
     const monthView = within(screen.getByTestId('month-view'));
-    const event = await monthView.findByLabelText('repeat-event');
-    expect(event).toBeInTheDocument();
-    const eventTitle = within(event).getByText('팀 회의');
+    const events = await monthView.findAllByLabelText('repeat-event');
+    expect(events[0]).toBeInTheDocument();
+    const eventTitle = within(events[0]).getByText('팀 회의');
     expect(eventTitle).toBeInTheDocument();
   });
 
@@ -370,7 +370,7 @@ describe('반복 종료', () => {
 
     const monthView = within(screen.getByTestId('month-view'));
     const events = await monthView.findAllByLabelText('repeat-event');
-    expect(events.length).toBe(7);
+    expect(events.length).toBe(8);
     const eventTitle = within(events[0]).getByText('팀 회의');
     expect(eventTitle).toBeInTheDocument();
   });

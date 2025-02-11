@@ -174,3 +174,19 @@ export function getRepeatRules(date: Date, frequency: 'monthly' | 'yearly'): str
         `매년 ${month + 1}월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
       ];
 }
+
+export const addDays = (date: Date, days: number) => {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+};
+
+export const addWeeks = (date: Date, weeks: number) => {
+  return addDays(date, weeks * 7);
+};
+
+export const addMonths = (date: Date, months: number) => {
+  const result = new Date(date);
+  result.setMonth(result.getMonth() + months);
+  return result;
+};
