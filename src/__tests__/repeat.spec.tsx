@@ -124,6 +124,7 @@ describe('반복 유형 선택', () => {
   });
 
   it('31일에 매년 반복 설정 시, 다음 옵션 중 하나를 선택할 수 있다: 매년 동일 월의 31일, 해당 연도의 동일 월에서 31일이 속한 주차의 같은 요일, 해당 연도의 동일 월 마지막 동일 요일, 해당 연도의 동일 월 마지막 날.', async () => {
+    // ! Rules라는 데이터형을 추가하지 않는 방식은 없을까?
     const { user } = setup(<App />);
 
     await user.type(screen.getByLabelText('날짜'), '2024-03-31');
@@ -219,7 +220,7 @@ describe('반복 간격 설정', () => {
   });
 });
 
-describe.only('반복 일정 표시', () => {
+describe('반복 일정 표시', () => {
   it('캘린더 뷰에서 기존의 반복 일정이 반복 일정으로 표시된다.', async () => {
     server.use(
       http.get('/api/events', () => {
@@ -283,6 +284,7 @@ describe.only('반복 일정 표시', () => {
   });
 
   it('사용자가 새로운 반복 일정을 추가 했다면, 해당 일정이 반복 일정으로 추가가 되어야한다.', async () => {
+    // ! 잚못된 구현: event-list로 구현해야함
     setupMockHandlerCreation([]);
 
     const { user } = setup(<App />);
@@ -306,6 +308,7 @@ describe.only('반복 일정 표시', () => {
   });
 
   it('사용자가 기존의 일정을 반복 일정으로 수정한다면, 반복 일정으로 변경 되어야 한다.', async () => {
+    // ! 잚못된 구현: event-list로 구현해야함
     setupMockHandlerUpdating();
 
     const { user } = setup(<App />);
@@ -340,4 +343,35 @@ describe.only('반복 일정 표시', () => {
   });
 });
 
-// 반복일정이 올바른 간격으로 다 연속적으로 잘 표시가 되는지도 확인해야함...
+describe('반복 종료', () => {
+  it('2024-10-15 부터 매일 1번씩 반복되는 일정이 2024-10-22에 끝난다면, 그날까지 반복일정으로 표시되어야한다.', async () => {
+    server.use(
+      http.get('/api/events', () => {
+        return HttpResponse.json({
+          events: [
+            {
+              id: 1,
+              title: '팀 회의',
+              date: '2024-10-15',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '주간 팀 미팅',
+              location: '회의실 A',
+              category: '업무',
+              repeat: { type: 'daily', interval: 1, rules: [], endDate: '2024-10-22' },
+              notificationTime: 10,
+            },
+          ],
+        });
+      })
+    );
+
+    setup(<App />);
+
+    const monthView = within(screen.getByTestId('month-view'));
+    const events = await monthView.findAllByLabelText('repeat-event');
+    expect(events.length).toBe(7);
+    const eventTitle = within(events[0]).getByText('팀 회의');
+    expect(eventTitle).toBeInTheDocument();
+  });
+});
