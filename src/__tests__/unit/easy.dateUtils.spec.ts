@@ -114,7 +114,7 @@ describe('getEventsForDay', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0, rules: [] },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
     {
@@ -126,7 +126,7 @@ describe('getEventsForDay', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0, rules: [] },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
     {
@@ -138,7 +138,7 @@ describe('getEventsForDay', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0, rules: [] },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
   ];
@@ -302,7 +302,7 @@ describe('formatDate', () => {
 
 describe('getRepeatRules', () => {
   it('매월 2024년 2월 29일 기준', () => {
-    expect(getRepeatRules(new Date('2024-02-29'), 'monthly')).toEqual([
+    expect(Object.values(getRepeatRules(new Date('2024-02-29'), 'monthly'))).toEqual([
       '매월 29일',
       '매월 5번째 목요일',
       '매월 마지막 목요일',
@@ -311,7 +311,7 @@ describe('getRepeatRules', () => {
   });
 
   it('매년 2024년 2월 29일 기준', () => {
-    expect(getRepeatRules(new Date('2024-02-29'), 'yearly')).toEqual([
+    expect(Object.values(getRepeatRules(new Date('2024-02-29'), 'yearly'))).toEqual([
       '매년 2월 29일',
       '매년 2월 5번째 목요일',
       '매년 2월 마지막 목요일',
@@ -320,7 +320,7 @@ describe('getRepeatRules', () => {
   });
 
   it('매월 2024년 3월 31일 기준', () => {
-    expect(getRepeatRules(new Date('2024-03-31'), 'monthly')).toEqual([
+    expect(Object.values(getRepeatRules(new Date('2024-03-31'), 'monthly'))).toEqual([
       '매월 31일',
       '매월 5번째 일요일',
       '매월 마지막 일요일',
@@ -329,7 +329,7 @@ describe('getRepeatRules', () => {
   });
 
   it('매년 2024년 3월 31일 기준', () => {
-    expect(getRepeatRules(new Date('2024-03-31'), 'yearly')).toEqual([
+    expect(Object.values(getRepeatRules(new Date('2024-03-31'), 'yearly'))).toEqual([
       '매년 3월 31일',
       '매년 3월 5번째 일요일',
       '매년 3월 마지막 일요일',
@@ -338,14 +338,14 @@ describe('getRepeatRules', () => {
   });
 
   it('매월 그 외 날짜 기준', () => {
-    expect(getRepeatRules(new Date('2024-02-17'), 'monthly')).toEqual([
+    expect(Object.values(getRepeatRules(new Date('2024-02-17'), 'monthly'))).toEqual([
       '매월 17일',
       '매월 3번째 토요일',
     ]);
   });
 
   it('매년 그 외 날짜 기준', () => {
-    expect(getRepeatRules(new Date('2024-02-17'), 'yearly')).toEqual([
+    expect(Object.values(getRepeatRules(new Date('2024-02-17'), 'yearly'))).toEqual([
       '매년 2월 17일',
       '매년 2월 3번째 토요일',
     ]);
