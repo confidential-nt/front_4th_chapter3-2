@@ -155,7 +155,6 @@ function App() {
         type: isRepeating ? repeatType : 'none',
         interval: repeatInterval,
         endDate: repeatEndDate || undefined,
-        rules: repeatRules,
       },
       notificationTime,
     };
@@ -194,15 +193,17 @@ function App() {
                     .filter((event) => new Date(event.date).toDateString() === date.toDateString())
                     .map((event) => {
                       const isNotified = notifiedEvents.includes(event.id);
+                      const isRepeatEvent = event.repeat.type !== 'none';
                       return (
                         <Box
                           key={event.id}
                           p={1}
                           my={1}
-                          bg={isNotified ? 'red.100' : 'gray.100'}
+                          bg={isNotified ? 'red.100' : isRepeatEvent ? 'green.100' : 'gray.100'}
                           borderRadius="md"
                           fontWeight={isNotified ? 'bold' : 'normal'}
                           color={isNotified ? 'red.500' : 'inherit'}
+                          aria-label={isRepeatEvent ? 'repeat-event' : undefined}
                         >
                           <HStack spacing={1}>
                             {isNotified && <BellIcon />}
@@ -392,6 +393,7 @@ function App() {
                 <Select
                   value={repeatType}
                   onChange={(e) => {
+                    // ! 한번 weekly로 갔다가 다시 daily로 와야 매일 로 등록되는 버그있음..
                     setRepeatType(e.target.value as RepeatType);
                     if (date && (e.target.value === 'monthly' || e.target.value === 'yearly')) {
                       setRepeatRules(getRepeatRules(new Date(date), e.target.value));
@@ -591,7 +593,6 @@ function App() {
                       type: isRepeating ? repeatType : 'none',
                       interval: repeatInterval,
                       endDate: repeatEndDate || undefined,
-                      rules: repeatRules,
                     },
                     notificationTime,
                   });
