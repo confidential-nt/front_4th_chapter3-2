@@ -48,7 +48,10 @@ export const saveScheduleWithRepeat = async (
   await user.type(screen.getByLabelText('위치'), location);
   await user.selectOptions(screen.getByLabelText('카테고리'), category);
   await user.selectOptions(screen.getByLabelText('반복 유형'), repeat.type);
-  await user.type(screen.getByLabelText('반복 간격'), String(repeat.interval));
+
+  const intervalInput = screen.getByLabelText('반복 간격');
+  await user.clear(intervalInput);
+  await user.type(intervalInput, String(repeat.interval));
 
   await user.click(screen.getByTestId('event-submit-button'));
 };

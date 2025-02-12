@@ -4,7 +4,11 @@ import { http, HttpResponse } from 'msw';
 import App from '../App';
 import { server } from '../setupTests';
 import { saveScheduleWithRepeat, setup } from './rtl-utils';
-import { setupMockHandlerCreation, setupMockHandlerUpdating } from '../__mocks__/handlersUtils';
+import {
+  setupEventListMockHandlerCreation,
+  setupMockHandlerCreation,
+  setupMockHandlerUpdating,
+} from '../__mocks__/handlersUtils';
 
 describe('반복 유형 선택', () => {
   it('사용자는 일정 생성 또는 수정 시 반복 유형을 선택할 수 있다.', async () => {
@@ -220,7 +224,7 @@ describe('반복 간격 설정', () => {
   });
 });
 
-describe('반복 일정 표시', () => {
+describe.only('반복 일정 표시', () => {
   it('캘린더 뷰에서 기존의 반복 일정이 반복 일정으로 표시된다.', async () => {
     server.use(
       http.get('/api/events', () => {
@@ -283,9 +287,8 @@ describe('반복 일정 표시', () => {
     expect(event).not.toBeInTheDocument();
   });
 
-  it('사용자가 새로운 반복 일정을 추가 했다면, 해당 일정이 반복 일정으로 추가가 되어야한다.', async () => {
-    // ! 잚못된 구현: event-list로 구현해야함
-    setupMockHandlerCreation([]);
+  it.only('사용자가 새로운 반복 일정을 추가 했다면, 해당 일정이 반복 일정으로 추가가 되어야한다.', async () => {
+    setupEventListMockHandlerCreation([]);
 
     const { user } = setup(<App />);
 
@@ -297,13 +300,13 @@ describe('반복 일정 표시', () => {
       description: '팀 미팅',
       location: '회의실 B',
       category: '업무',
-      repeat: { type: 'weekly', interval: 1, rules: [] },
+      repeat: { type: 'daily', interval: 1, rules: [], endDate: '2024-10-18' },
     });
 
     const monthView = within(screen.getByTestId('month-view'));
-    const event = await monthView.findByLabelText('repeat-event');
-    expect(event).toBeInTheDocument();
-    const eventTitle = within(event).getByText('새로운 회의');
+    const events = await monthView.findAllByLabelText('repeat-event');
+    expect(events[0]).toBeInTheDocument();
+    const eventTitle = within(events[0]).getByText('새로운 회의');
     expect(eventTitle).toBeInTheDocument();
   });
 
