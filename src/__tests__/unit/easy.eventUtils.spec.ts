@@ -1,5 +1,5 @@
 import { Event } from '../../types';
-import { getExpandedEvents, getFilteredEvents } from '../../utils/eventUtils';
+import { getRepeatEvents, getFilteredEvents } from '../../utils/eventUtils';
 
 describe('getFilteredEvents', () => {
   const events: Event[] = [
@@ -115,10 +115,10 @@ describe('getFilteredEvents', () => {
   });
 });
 
-describe('getExpandedEvents', () => {
+describe('getRepeatEvents', () => {
   it('2024-10-13 부터 시작하는 반복 일정이 2024-10-20 까지 매일 한번의 간격으로 진행된다면 총 8개의 이벤트가 생성되어야한다.', () => {
     expect(
-      getExpandedEvents({
+      getRepeatEvents({
         title: '기존 회의',
         date: '2024-10-13',
         startTime: '09:00',
@@ -216,6 +216,295 @@ describe('getExpandedEvents', () => {
         location: '회의실 B',
         category: '업무',
         repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+    ]);
+  });
+
+  it('2024-03-31 부터 시작하는 반복 일정이 2025-06-30 까지 "normal" 옵션으로 진행될 경우 총 7개의 이벤트가 생성되어야한다.', () => {
+    expect(
+      getRepeatEvents({
+        title: '기존 회의',
+        date: '2024-03-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'normal' },
+        notificationTime: 10,
+      })
+    ).toEqual([
+      {
+        title: '기존 회의',
+        date: '2024-03-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'normal',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-05-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'normal',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-07-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'normal',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'normal',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-12-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'normal',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2025-03-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'normal',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2025-05-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'normal',
+        },
+        notificationTime: 10,
+      },
+    ]);
+  });
+
+  it('2024-02-29 부터 시작하는 반복 일정이 2025-06-30 까지 "last-day" 옵션으로 진행될 경우 총 10개의 이벤트가 생성되어야한다.', () => {
+    expect(
+      getRepeatEvents({
+        title: '기존 회의',
+        date: '2024-02-29',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-day' },
+        notificationTime: 10,
+      })
+    ).toEqual([
+      {
+        title: '기존 회의',
+        date: '2024-02-29',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-03-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-05-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-07-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-08-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-12-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2025-01-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2025-03-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2025-05-31',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: {
+          type: 'monthly',
+          interval: 1,
+          rule: 'last-day',
+        },
         notificationTime: 10,
       },
     ]);

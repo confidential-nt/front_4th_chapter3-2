@@ -49,6 +49,11 @@ export const saveScheduleWithRepeat = async (
   await user.selectOptions(screen.getByLabelText('카테고리'), category);
   await user.selectOptions(screen.getByLabelText('반복 유형'), repeat.type);
 
+  if (repeat.type === 'yearly' || repeat.type === 'monthly') {
+    const repeatRuleSelect = await screen.findByLabelText('반복 규칙');
+    await user.selectOptions(repeatRuleSelect, repeat.rule);
+  }
+
   const intervalInput = screen.getByLabelText('반복 간격');
   await user.clear(intervalInput);
   await user.type(intervalInput, String(repeat.interval));

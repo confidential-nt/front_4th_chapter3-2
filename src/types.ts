@@ -1,10 +1,10 @@
 export type RepeatType = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
-
+export type RepeatRule = 'normal' | 'last-day' | 'same-weekday-nth' | 'last-weekday';
 export interface RepeatInfo {
   type: RepeatType;
   interval: number;
   endDate?: string;
-  rules: string[];
+  rule: RepeatRule;
 }
 
 export interface EventForm {

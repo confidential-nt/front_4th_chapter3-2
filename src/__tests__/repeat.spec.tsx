@@ -269,7 +269,7 @@ describe('반복 일정 표시', () => {
       description: '팀 미팅',
       location: '회의실 B',
       category: '업무',
-      repeat: { type: 'daily', interval: 1, endDate: '2024-10-18' },
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-18', rule: 'normal' },
     });
 
     const monthView = within(screen.getByTestId('month-view'));
@@ -292,7 +292,7 @@ describe('반복 일정 표시', () => {
       description: '팀 미팅',
       location: '회의실 B',
       category: '업무',
-      repeat: { type: 'daily', interval: 1, endDate: '2024-10-08' },
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-08', rule: 'normal' },
     });
 
     await user.selectOptions(screen.getByLabelText('view'), 'week');

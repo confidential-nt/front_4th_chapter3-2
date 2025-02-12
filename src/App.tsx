@@ -45,7 +45,7 @@ import { useEventForm } from './hooks/useEventForm.ts';
 import { useEventOperations } from './hooks/useEventOperations.ts';
 import { useNotifications } from './hooks/useNotifications.ts';
 import { useSearch } from './hooks/useSearch.ts';
-import { Event, EventForm, RepeatType } from './types';
+import { Event, EventForm, RepeatRule, RepeatType } from './types';
 import {
   formatDate,
   formatMonth,
@@ -88,8 +88,8 @@ function App() {
     setIsRepeating,
     repeatType,
     setRepeatType,
-    repeatRules,
-    setRepeatRules,
+    repeatRule,
+    setRepeatRule,
     repeatInterval,
     setRepeatInterval,
     repeatEndDate,
@@ -117,6 +117,7 @@ function App() {
 
   const [isOverlapDialogOpen, setIsOverlapDialogOpen] = useState(false);
   const [overlappingEvents, setOverlappingEvents] = useState<Event[]>([]);
+  const [repeatRules, setRepeatRules] = useState<Record<string, string> | null>();
   const cancelRef = useRef<HTMLButtonElement>(null);
 
   const toast = useToast();
@@ -155,6 +156,7 @@ function App() {
         type: isRepeating ? repeatType : 'none',
         interval: repeatInterval,
         endDate: repeatEndDate || undefined,
+        rule: repeatRule,
       },
       notificationTime,
     };
@@ -398,7 +400,7 @@ function App() {
                     if (date && (e.target.value === 'monthly' || e.target.value === 'yearly')) {
                       setRepeatRules(getRepeatRules(new Date(date), e.target.value));
                     } else {
-                      setRepeatRules([]);
+                      setRepeatRules(null);
                     }
                   }}
                 >
@@ -408,12 +410,18 @@ function App() {
                   <option value="yearly">매년</option>
                 </Select>
               </FormControl>
-              {repeatRules && repeatRules.length > 0 && (
+              {repeatRules && (
                 <FormControl>
                   <FormLabel>반복 규칙</FormLabel>
-                  <Select>
-                    {repeatRules.map((rule, index) => (
-                      <option key={index}>{rule}</option>
+                  <Select
+                    onChange={(e) => {
+                      setRepeatRule(e.target.value as RepeatRule);
+                    }}
+                  >
+                    {Object.entries(repeatRules).map(([key, value], index) => (
+                      <option key={index} value={key}>
+                        {value}
+                      </option>
                     ))}
                   </Select>
                 </FormControl>
@@ -593,6 +601,7 @@ function App() {
                       type: isRepeating ? repeatType : 'none',
                       interval: repeatInterval,
                       endDate: repeatEndDate || undefined,
+                      rule: repeatRule,
                     },
                     notificationTime,
                   });

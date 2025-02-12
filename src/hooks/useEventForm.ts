@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from 'react';
 
-import { Event, RepeatType } from '../types';
+import { Event, RepeatRule, RepeatType } from '../types';
 import { getTimeErrorMessage } from '../utils/timeValidation';
 
 type TimeErrorRecord = Record<'startTimeError' | 'endTimeError', string | null>;
@@ -15,8 +15,7 @@ export const useEventForm = (initialEvent?: Event) => {
   const [category, setCategory] = useState(initialEvent?.category || '');
   const [isRepeating, setIsRepeating] = useState(initialEvent?.repeat.type !== 'none');
   const [repeatType, setRepeatType] = useState<RepeatType>(initialEvent?.repeat.type || 'none');
-  const [repeatRules, setRepeatRules] = useState<string[]>(initialEvent?.repeat.rules || []);
-
+  const [repeatRule, setRepeatRule] = useState<RepeatRule>(initialEvent?.repeat.rule || 'normal');
   const [repeatInterval, setRepeatInterval] = useState(initialEvent?.repeat.interval || 1);
   const [repeatEndDate, setRepeatEndDate] = useState(initialEvent?.repeat.endDate || '');
   const [notificationTime, setNotificationTime] = useState(initialEvent?.notificationTime || 10);
@@ -50,7 +49,7 @@ export const useEventForm = (initialEvent?: Event) => {
     setCategory('');
     setIsRepeating(false);
     setRepeatType('none');
-    setRepeatRules([]);
+    setRepeatRule('normal');
     setRepeatInterval(1);
     setRepeatEndDate('');
     setNotificationTime(10);
@@ -67,7 +66,7 @@ export const useEventForm = (initialEvent?: Event) => {
     setCategory(event.category);
     setIsRepeating(event.repeat.type !== 'none');
     setRepeatType(event.repeat.type);
-    setRepeatRules(event.repeat.rules);
+    setRepeatRule(event.repeat.rule);
     setRepeatInterval(event.repeat.interval);
     setRepeatEndDate(event.repeat.endDate || '');
     setNotificationTime(event.notificationTime);
@@ -92,8 +91,8 @@ export const useEventForm = (initialEvent?: Event) => {
     setIsRepeating,
     repeatType,
     setRepeatType,
-    repeatRules,
-    setRepeatRules,
+    repeatRule,
+    setRepeatRule,
     repeatInterval,
     setRepeatInterval,
     repeatEndDate,
