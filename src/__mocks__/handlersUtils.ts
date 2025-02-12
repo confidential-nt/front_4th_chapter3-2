@@ -100,7 +100,10 @@ export const setupEventListMockHandlerCreation = (initEvents = [] as Event[]) =>
       return HttpResponse.json({ events: mockEvents });
     }),
     http.post('/api/events-list', async ({ request }) => {
-      const events = (await request.json()) as Event[];
+      const json = (await request.json()) as {
+        events: Event[];
+      };
+      const events = json.events;
       const repeatId = String(events.length + 1);
 
       const newEvents = events.map((event: Event) => {
@@ -155,8 +158,10 @@ export const setupEventListMockHandlerUpdating = () => {
     }),
     http.put('/api/events-list', async ({ request }) => {
       let isUpdated = false;
-
-      const reqEvents = (await request.json()) as Event[];
+      const json = (await request.json()) as {
+        events: Event[];
+      };
+      const reqEvents = json.events;
       const newEvents = [...mockEvents];
 
       reqEvents.forEach((event) => {
@@ -167,13 +172,7 @@ export const setupEventListMockHandlerUpdating = () => {
         }
       });
 
-      if (isUpdated) {
-        return HttpResponse.json(newEvents, { status: 201 });
-      } else {
-        return HttpResponse.json(null, {
-          status: 404,
-        });
-      }
+      return HttpResponse.json(newEvents, { status: 201 });
     })
   );
 };

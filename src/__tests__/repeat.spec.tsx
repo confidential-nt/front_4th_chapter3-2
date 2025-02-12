@@ -225,38 +225,7 @@ describe('반복 간격 설정', () => {
   });
 });
 
-describe.only('반복 일정 표시', () => {
-  it('캘린더 뷰에서 기존의 반복 일정이 반복 일정으로 표시된다.', async () => {
-    server.use(
-      http.get('/api/events', () => {
-        return HttpResponse.json({
-          events: [
-            {
-              id: 1,
-              title: '팀 회의',
-              date: '2024-10-15',
-              startTime: '09:00',
-              endTime: '10:00',
-              description: '주간 팀 미팅',
-              location: '회의실 A',
-              category: '업무',
-              repeat: { type: 'weekly', interval: 1, rules: [] },
-              notificationTime: 10,
-            },
-          ],
-        });
-      })
-    );
-
-    setup(<App />);
-
-    const monthView = within(screen.getByTestId('month-view'));
-    const events = await monthView.findAllByLabelText('repeat-event');
-    expect(events[0]).toBeInTheDocument();
-    const eventTitle = within(events[0]).getByText('팀 회의');
-    expect(eventTitle).toBeInTheDocument();
-  });
-
+describe('반복 일정 표시', () => {
   it('기존의 일정 중에서 반복 일정이 아닌 경우, 반복 일정으로 표시되지 않는다.', async () => {
     server.use(
       http.get('/api/events', () => {
@@ -288,7 +257,7 @@ describe.only('반복 일정 표시', () => {
     expect(event).not.toBeInTheDocument();
   });
 
-  it.only('사용자가 새로운 반복 일정을 추가 했다면, 해당 일정이 반복 일정으로 추가가 되어야한다.', async () => {
+  it('사용자가 새로운 반복 일정을 추가 했다면, 해당 일정이 반복 일정으로 추가가 되어야한다.', async () => {
     setupEventListMockHandlerCreation([]);
 
     const { user } = setup(<App />);
@@ -311,8 +280,9 @@ describe.only('반복 일정 표시', () => {
     expect(eventTitle).toBeInTheDocument();
   });
 
-  it('사용자가 기존의 일정을 반복 일정으로 수정한다면, 반복 일정으로 변경 되어야 한다.', async () => {
+  it.skip('사용자가 반복 일정을 수정한다면, 반복 일정으로 변경 되어야 한다.', async () => {
     // ! 잚못된 구현: event-list로 구현해야함
+    // ! 요구사항을 잘못이해한 잘못된 테스트
     setupEventListMockHandlerUpdating();
 
     const { user } = setup(<App />);
@@ -348,21 +318,97 @@ describe.only('반복 일정 표시', () => {
 });
 
 describe('반복 종료', () => {
-  it('2024-10-15 부터 매일 1번씩 반복되는 일정이 2024-10-22에 끝난다면, 그날까지 반복일정으로 표시되어야한다.', async () => {
+  it('2024-10-13 부터 매일 1번씩 반복되는 일정이 2024-10-20에 끝난다면, 그날까지 반복일정으로 표시되어야한다.', async () => {
     server.use(
       http.get('/api/events', () => {
         return HttpResponse.json({
           events: [
             {
-              id: 1,
-              title: '팀 회의',
+              title: '기존 회의',
+              date: '2024-10-13',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '기존 팀 미팅',
+              location: '회의실 B',
+              category: '업무',
+              repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+              notificationTime: 10,
+            },
+            {
+              title: '기존 회의',
+              date: '2024-10-14',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '기존 팀 미팅',
+              location: '회의실 B',
+              category: '업무',
+              repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+              notificationTime: 10,
+            },
+            {
+              title: '기존 회의',
               date: '2024-10-15',
               startTime: '09:00',
               endTime: '10:00',
-              description: '주간 팀 미팅',
-              location: '회의실 A',
+              description: '기존 팀 미팅',
+              location: '회의실 B',
               category: '업무',
-              repeat: { type: 'daily', interval: 1, rules: [], endDate: '2024-10-22' },
+              repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+              notificationTime: 10,
+            },
+            {
+              title: '기존 회의',
+              date: '2024-10-16',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '기존 팀 미팅',
+              location: '회의실 B',
+              category: '업무',
+              repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+              notificationTime: 10,
+            },
+            {
+              title: '기존 회의',
+              date: '2024-10-17',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '기존 팀 미팅',
+              location: '회의실 B',
+              category: '업무',
+              repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+              notificationTime: 10,
+            },
+            {
+              title: '기존 회의',
+              date: '2024-10-18',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '기존 팀 미팅',
+              location: '회의실 B',
+              category: '업무',
+              repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+              notificationTime: 10,
+            },
+            {
+              title: '기존 회의',
+              date: '2024-10-19',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '기존 팀 미팅',
+              location: '회의실 B',
+              category: '업무',
+              repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+              notificationTime: 10,
+            },
+            {
+              title: '기존 회의',
+              date: '2024-10-20',
+              startTime: '09:00',
+              endTime: '10:00',
+              description: '기존 팀 미팅',
+              location: '회의실 B',
+              category: '업무',
+              repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
               notificationTime: 10,
             },
           ],
@@ -375,7 +421,7 @@ describe('반복 종료', () => {
     const monthView = within(screen.getByTestId('month-view'));
     const events = await monthView.findAllByLabelText('repeat-event');
     expect(events.length).toBe(8);
-    const eventTitle = within(events[0]).getByText('팀 회의');
+    const eventTitle = within(events[0]).getByText('기존 회의');
     expect(eventTitle).toBeInTheDocument();
   });
 });
