@@ -400,7 +400,7 @@ describe('반복 일정 단일 수정', () => {
     const events = await monthView.findAllByLabelText('repeat-event');
     expect(events.length).toBe(3);
 
-    const editButton = (await screen.findAllByLabelText('Edit event'))[1];
+    const editButton = (await screen.findAllByLabelText('Edit event'))[0];
     await user.click(editButton);
 
     const titleInput = screen.getByLabelText('제목');

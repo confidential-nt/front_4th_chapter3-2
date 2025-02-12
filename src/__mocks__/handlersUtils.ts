@@ -105,13 +105,14 @@ export const setupEventListMockHandlerCreation = (initEvents = [] as Event[]) =>
       };
       const events = json.events;
       const repeatId = String(events.length + 1);
+      let eventId = mockEvents.length;
 
       const newEvents = events.map((event: Event) => {
         const isRepeatEvent = event.repeat.type !== 'none';
-
+        eventId += 1;
         return {
           ...event,
-          id: String(mockEvents.length + 1),
+          id: String(eventId),
           repeat: {
             ...event.repeat,
             id: isRepeatEvent ? repeatId : undefined,
@@ -135,20 +136,32 @@ export const setupEventListMockHandlerUpdating = () => {
       description: '기존 팀 미팅',
       location: '회의실 B',
       category: '업무',
-      repeat: { type: 'none', interval: 0, rules: [] },
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-17' },
       notificationTime: 10,
     },
     {
       id: '2',
-      title: '기존 회의2',
-      date: '2024-10-15',
-      startTime: '11:00',
-      endTime: '12:00',
-      description: '기존 팀 미팅 2',
-      location: '회의실 C',
-      category: '업무 회의',
-      repeat: { type: 'none', interval: 0, rules: [] },
-      notificationTime: 5,
+      title: '기존 회의',
+      date: '2024-10-16',
+      startTime: '09:00',
+      endTime: '10:00',
+      description: '기존 팀 미팅',
+      location: '회의실 B',
+      category: '업무',
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-17' },
+      notificationTime: 10,
+    },
+    {
+      id: '3',
+      title: '기존 회의',
+      date: '2024-10-17',
+      startTime: '09:00',
+      endTime: '10:00',
+      description: '기존 팀 미팅',
+      location: '회의실 B',
+      category: '업무',
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-17' },
+      notificationTime: 10,
     },
   ];
 
@@ -162,17 +175,16 @@ export const setupEventListMockHandlerUpdating = () => {
         events: Event[];
       };
       const reqEvents = json.events;
-      const newEvents = [...mockEvents];
 
       reqEvents.forEach((event) => {
         const eventIndex = mockEvents.findIndex((target) => target.id === event.id);
         if (eventIndex > -1) {
           isUpdated = true;
-          newEvents[eventIndex] = { ...mockEvents[eventIndex], ...event };
+          mockEvents[eventIndex] = { ...mockEvents[eventIndex], ...event };
         }
       });
 
-      return HttpResponse.json(newEvents, { status: 201 });
+      return HttpResponse.json(mockEvents, { status: 201 });
     })
   );
 };
