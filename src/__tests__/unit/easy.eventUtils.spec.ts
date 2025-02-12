@@ -1,5 +1,5 @@
 import { Event } from '../../types';
-import { getFilteredEvents } from '../../utils/eventUtils';
+import { getExpandedEvents, getFilteredEvents } from '../../utils/eventUtils';
 
 describe('getFilteredEvents', () => {
   const events: Event[] = [
@@ -112,5 +112,112 @@ describe('getFilteredEvents', () => {
   it('빈 이벤트 리스트에 대해 빈 배열을 반환한다', () => {
     const result = getFilteredEvents([], '', new Date('2024-07-01'), 'month');
     expect(result).toHaveLength(0);
+  });
+});
+
+describe('getExpandedEvents', () => {
+  it('2024-10-13 부터 시작하는 반복 일정이 2024-10-20 까지 매일 한번의 간격으로 진행된다면 총 8개의 이벤트가 생성되어야한다.', () => {
+    expect(
+      getExpandedEvents({
+        title: '기존 회의',
+        date: '2024-10-13',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      })
+    ).toEqual([
+      {
+        title: '기존 회의',
+        date: '2024-10-13',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-14',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-15',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-16',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-17',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-18',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-19',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-10-20',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        notificationTime: 10,
+      },
+    ]);
   });
 });
