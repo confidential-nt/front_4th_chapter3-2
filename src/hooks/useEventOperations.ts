@@ -124,6 +124,9 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     try {
       const response = await fetch(`/api/events-list`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           eventIds,
         }),
