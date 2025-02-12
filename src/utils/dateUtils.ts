@@ -109,7 +109,10 @@ export function formatDate(currentDate: Date, day?: number) {
   ].join('-');
 }
 
-export function getRepeatRules(date: Date, frequency: 'monthly' | 'yearly'): string[] {
+export function getRepeatRules(
+  date: Date,
+  frequency: 'monthly' | 'yearly'
+): Record<string, string> {
   const year = date.getFullYear();
   const month = date.getMonth(); // 0-based index
   const day = date.getDate();
@@ -135,44 +138,47 @@ export function getRepeatRules(date: Date, frequency: 'monthly' | 'yearly'): str
   // 윤년 2월 29일 처리
   if (month === 1 && day === 29 && isLeapYear(year)) {
     return frequency === 'monthly'
-      ? [
-          `매월 29일`,
-          `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
-          `매월 마지막 ${weekdays[dayOfWeek]}`,
-          `매월 마지막 날`,
-        ]
-      : [
-          `매년 2월 29일`,
-          `매년 2월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
-          `매년 2월 마지막 ${weekdays[dayOfWeek]}`,
-          `매년 2월 마지막 날`,
-        ];
+      ? {
+          normal: '매월 29일',
+          'same-weekday-nth': `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+          'last-weekday': `매월 마지막 ${weekdays[dayOfWeek]}`,
+          'last-day': `매월 마지막 날`,
+        }
+      : {
+          normal: `매년 2월 29일`,
+          'same-weekday-nth': `매년 2월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+          'last-weekday': `매년 2월 마지막 ${weekdays[dayOfWeek]}`,
+          'last-day': `매년 2월 마지막 날`,
+        };
   }
 
   // 31일 처리
   if (day === 31) {
     return frequency === 'monthly'
-      ? [
-          `매월 31일`,
-          `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
-          `매월 마지막 ${weekdays[dayOfWeek]}`,
-          `매월 마지막 날`,
-        ]
-      : [
-          `매년 ${month + 1}월 31일`,
-          `매년 ${month + 1}월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
-          `매년 ${month + 1}월 마지막 ${weekdays[dayOfWeek]}`,
-          `매년 ${month + 1}월 마지막 날`,
-        ];
+      ? {
+          normal: `매월 31일`,
+          'same-weekday-nth': `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+          'last-weekday': `매월 마지막 ${weekdays[dayOfWeek]}`,
+          'last-day': `매월 마지막 날`,
+        }
+      : {
+          normal: `매년 ${month + 1}월 31일`,
+          'same-weekday-nth': `매년 ${month + 1}월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+          'last-weekday': `매년 ${month + 1}월 마지막 ${weekdays[dayOfWeek]}`,
+          'last-day': `매년 ${month + 1}월 마지막 날`,
+        };
   }
 
   // 일반적인 날짜 처리
   return frequency === 'monthly'
-    ? [`매월 ${day}일`, `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`]
-    : [
-        `매년 ${month + 1}월 ${day}일`,
-        `매년 ${month + 1}월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
-      ];
+    ? {
+        normal: `매월 ${day}일`,
+        'same-weekday-nth': `매월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+      }
+    : {
+        normal: `매년 ${month + 1}월 ${day}일`,
+        'same-weekday-nth': `매년 ${month + 1}월 ${weekOfMonth}번째 ${weekdays[dayOfWeek]}`,
+      };
 }
 
 export const addDays = (date: Date, days: number) => {
@@ -188,5 +194,11 @@ export const addWeeks = (date: Date, weeks: number) => {
 export const addMonths = (date: Date, months: number) => {
   const result = new Date(date);
   result.setMonth(result.getMonth() + months);
+  return result;
+};
+
+export const addYears = (date: Date, years: number) => {
+  const result = new Date(date);
+  result.setFullYear(result.getFullYear() + years);
   return result;
 };
