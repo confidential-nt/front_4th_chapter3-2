@@ -41,7 +41,18 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
           response = await fetch('/api/events-list', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ events: getExpandedEvents(eventData) }), // ! 여기서 expanded한 데이터를 만들어내는것일까..
+            body: JSON.stringify({
+              events: [
+                ...events,
+                {
+                  ...eventData,
+                  repeat: {
+                    type: 'none',
+                    interval: 0,
+                  },
+                },
+              ],
+            }),
           });
         }
       } else {
