@@ -106,8 +106,9 @@ function App() {
     editEvent,
   } = useEventForm();
 
-  const { events, saveEvent, deleteEvent } = useEventOperations(Boolean(editingEvent), () =>
-    setEditingEvent(null)
+  const { events, saveEvent, deleteEvent, deleteRepeatEvent } = useEventOperations(
+    Boolean(editingEvent),
+    () => setEditingEvent(null)
   );
 
   const { notifications, notifiedEvents, setNotifications } = useNotifications(events);
@@ -405,7 +406,7 @@ function App() {
                   <option value="yearly">매년</option>
                 </Select>
               </FormControl>
-              {repeatRules.length > 0 && (
+              {repeatRules && repeatRules.length > 0 && (
                 <FormControl>
                   <FormLabel>반복 규칙</FormLabel>
                   <Select>
@@ -532,7 +533,13 @@ function App() {
                     <IconButton
                       aria-label="Delete event"
                       icon={<DeleteIcon />}
-                      onClick={() => deleteEvent(event.id)}
+                      onClick={() => {
+                        if (event.repeat.type === 'none') {
+                          deleteEvent(event.id);
+                        } else {
+                          deleteRepeatEvent([event.id]);
+                        }
+                      }}
                     />
                   </HStack>
                 </HStack>
