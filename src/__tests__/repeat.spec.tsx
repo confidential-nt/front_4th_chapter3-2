@@ -8,8 +8,6 @@ import {
   setupEventListMockHandlerCreation,
   setupEventListMockHandlerDeletion,
   setupEventListMockHandlerUpdating,
-  setupMockHandlerCreation,
-  setupMockHandlerUpdating,
 } from '../__mocks__/handlersUtils';
 
 describe('반복 유형 선택', () => {
@@ -271,11 +269,36 @@ describe('반복 일정 표시', () => {
       description: '팀 미팅',
       location: '회의실 B',
       category: '업무',
-      repeat: { type: 'daily', interval: 1, rules: [], endDate: '2024-10-18' },
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-18' },
     });
 
     const monthView = within(screen.getByTestId('month-view'));
     const events = await monthView.findAllByLabelText('repeat-event');
+    expect(events[0]).toBeInTheDocument();
+    const eventTitle = within(events[0]).getByText('새로운 회의');
+    expect(eventTitle).toBeInTheDocument();
+  });
+
+  it('주별 뷰에서 사용자가 새로운 반복 일정을 추가 했다면, 해당 일정이 반복 일정으로 추가가 되어야한다.', async () => {
+    setupEventListMockHandlerCreation([]);
+
+    const { user } = setup(<App />);
+
+    await saveScheduleWithRepeat(user, {
+      title: '새로운 회의',
+      date: '2024-10-01',
+      startTime: '09:00',
+      endTime: '10:00',
+      description: '팀 미팅',
+      location: '회의실 B',
+      category: '업무',
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-08' },
+    });
+
+    await user.selectOptions(screen.getByLabelText('view'), 'week');
+
+    const weekView = within(screen.getByTestId('week-view'));
+    const events = await weekView.findAllByLabelText('repeat-event');
     expect(events[0]).toBeInTheDocument();
     const eventTitle = within(events[0]).getByText('새로운 회의');
     expect(eventTitle).toBeInTheDocument();
