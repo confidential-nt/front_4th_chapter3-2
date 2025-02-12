@@ -6,6 +6,7 @@ import { server } from '../setupTests';
 import { saveScheduleWithRepeat, setup } from './rtl-utils';
 import {
   setupEventListMockHandlerCreation,
+  setupEventListMockHandlerDeletion,
   setupEventListMockHandlerUpdating,
   setupMockHandlerCreation,
   setupMockHandlerUpdating,
@@ -412,6 +413,24 @@ describe('반복 일정 단일 수정', () => {
 
     const eventTitle = monthView.getByText('수정된 회의');
     expect(eventTitle).toBeInTheDocument();
+    const updatedEvents = await monthView.findAllByLabelText('repeat-event');
+    expect(updatedEvents.length).toBe(2);
+  });
+});
+
+describe('반복 일정 단일 삭제', () => {
+  it('사용자가 반복 일정 중 하나를 삭제하면 해당 이벤트만 단일 삭제된다.', async () => {
+    setupEventListMockHandlerDeletion();
+
+    const { user } = setup(<App />);
+
+    const monthView = within(screen.getByTestId('month-view'));
+    const events = await monthView.findAllByLabelText('repeat-event');
+    expect(events.length).toBe(3);
+
+    const allDeleteButton = await screen.findAllByLabelText('Delete event');
+    await user.click(allDeleteButton[0]);
+
     const updatedEvents = await monthView.findAllByLabelText('repeat-event');
     expect(updatedEvents.length).toBe(2);
   });

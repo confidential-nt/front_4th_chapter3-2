@@ -190,17 +190,41 @@ export const setupEventListMockHandlerUpdating = () => {
 };
 
 export const setupEventListMockHandlerDeletion = () => {
-  const mockEvents: Event[] = [
+  let mockEvents: Event[] = [
     {
       id: '1',
-      title: '삭제할 이벤트',
+      title: '기존 회의',
       date: '2024-10-15',
       startTime: '09:00',
       endTime: '10:00',
-      description: '삭제할 이벤트입니다',
-      location: '어딘가',
-      category: '기타',
-      repeat: { type: 'none', interval: 0, rules: [] },
+      description: '기존 팀 미팅',
+      location: '회의실 B',
+      category: '업무',
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-17' },
+      notificationTime: 10,
+    },
+    {
+      id: '2',
+      title: '기존 회의',
+      date: '2024-10-16',
+      startTime: '09:00',
+      endTime: '10:00',
+      description: '기존 팀 미팅',
+      location: '회의실 B',
+      category: '업무',
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-17' },
+      notificationTime: 10,
+    },
+    {
+      id: '3',
+      title: '기존 회의',
+      date: '2024-10-17',
+      startTime: '09:00',
+      endTime: '10:00',
+      description: '기존 팀 미팅',
+      location: '회의실 B',
+      category: '업무',
+      repeat: { type: 'daily', interval: 1, endDate: '2024-10-17' },
       notificationTime: 10,
     },
   ];
@@ -209,11 +233,12 @@ export const setupEventListMockHandlerDeletion = () => {
     http.get('/api/events', () => {
       return HttpResponse.json({ events: mockEvents });
     }),
-    http.delete('/api/events/:id', ({ params }) => {
-      const { id } = params;
-      const index = mockEvents.findIndex((event) => event.id === id);
-
-      mockEvents.splice(index, 1);
+    http.delete('/api/events-list', async ({ request }) => {
+      const json = (await request.json()) as {
+        eventIds: string[];
+      };
+      const eventIds = json.eventIds;
+      mockEvents = mockEvents.filter((event) => !eventIds.includes(event.id));
       return new HttpResponse(null, { status: 204 });
     })
   );
