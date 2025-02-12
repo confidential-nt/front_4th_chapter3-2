@@ -279,42 +279,6 @@ describe('반복 일정 표시', () => {
     const eventTitle = within(events[0]).getByText('새로운 회의');
     expect(eventTitle).toBeInTheDocument();
   });
-
-  it.skip('사용자가 반복 일정을 수정한다면, 반복 일정으로 변경 되어야 한다.', async () => {
-    // ! 잚못된 구현: event-list로 구현해야함
-    // ! 요구사항을 잘못이해한 잘못된 테스트
-    setupEventListMockHandlerUpdating();
-
-    const { user } = setup(<App />);
-
-    const editButton = (await screen.findAllByLabelText('Edit event'))[1];
-    await user.click(editButton);
-
-    const checkbox = screen.getByLabelText('반복 일정') as HTMLInputElement;
-    if (!checkbox.checked) {
-      await user.click(checkbox);
-    }
-
-    const titleInput = screen.getByLabelText('제목');
-
-    await user.clear(titleInput);
-    await user.type(titleInput, '수정된 회의');
-
-    await user.selectOptions(screen.getByLabelText('반복 유형'), 'monthly');
-
-    const repeatIntervalInput = screen.getByLabelText('반복 간격') as HTMLInputElement;
-
-    await user.clear(repeatIntervalInput);
-    await user.type(repeatIntervalInput, '1');
-
-    await user.click(screen.getByTestId('event-submit-button'));
-
-    const monthView = within(screen.getByTestId('month-view'));
-    const events = await monthView.findAllByLabelText('repeat-event');
-    expect(events[0]).toBeInTheDocument();
-    const eventTitle = within(events[0]).getByText('수정된 회의');
-    expect(eventTitle).toBeInTheDocument();
-  });
 });
 
 describe('반복 종료', () => {
@@ -423,5 +387,32 @@ describe('반복 종료', () => {
     expect(events.length).toBe(8);
     const eventTitle = within(events[0]).getByText('기존 회의');
     expect(eventTitle).toBeInTheDocument();
+  });
+});
+
+describe('반복 일정 단일 수정', () => {
+  it('사용자가 반복 일정을 수정한다면, 수정된 단일 일정으로 변경 되어야 한다.', async () => {
+    setupEventListMockHandlerUpdating();
+
+    const { user } = setup(<App />);
+
+    const monthView = within(screen.getByTestId('month-view'));
+    const events = await monthView.findAllByLabelText('repeat-event');
+    expect(events.length).toBe(3);
+
+    const editButton = (await screen.findAllByLabelText('Edit event'))[1];
+    await user.click(editButton);
+
+    const titleInput = screen.getByLabelText('제목');
+
+    await user.clear(titleInput);
+    await user.type(titleInput, '수정된 회의');
+
+    await user.click(screen.getByTestId('event-submit-button'));
+
+    const eventTitle = monthView.getByText('수정된 회의');
+    expect(eventTitle).toBeInTheDocument();
+    const updatedEvents = await monthView.findAllByLabelText('repeat-event');
+    expect(updatedEvents.length).toBe(2);
   });
 });
