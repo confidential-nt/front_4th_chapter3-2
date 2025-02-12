@@ -31,11 +31,19 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     try {
       let response;
       if (editing) {
-        response = await fetch(`/api/events/${(eventData as Event).id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(eventData),
-        });
+        if (eventData.repeat.type === 'none') {
+          response = await fetch(`/api/events/${(eventData as Event).id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(eventData),
+          });
+        } else {
+          response = await fetch('/api/events-list', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ events: getExpandedEvents(eventData) }), // ! 여기서 expanded한 데이터를 만들어내는것일까..
+          });
+        }
       } else {
         if (eventData.repeat.type === 'none') {
           response = await fetch('/api/events', {
@@ -47,7 +55,7 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
           response = await fetch('/api/events-list', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(getExpandedEvents(eventData)), // ! 여기서 expanded한 데이터를 만들어내는것일까..
+            body: JSON.stringify({ events: getExpandedEvents(eventData) }), // ! 여기서 expanded한 데이터를 만들어내는것일까..
           });
         }
       }
