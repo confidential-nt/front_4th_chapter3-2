@@ -6,6 +6,7 @@ import { server } from '../setupTests';
 import { saveScheduleWithRepeat, setup } from './rtl-utils';
 import {
   setupEventListMockHandlerCreation,
+  setupEventListMockHandlerUpdating,
   setupMockHandlerCreation,
   setupMockHandlerUpdating,
 } from '../__mocks__/handlersUtils';
@@ -312,7 +313,7 @@ describe.only('반복 일정 표시', () => {
 
   it('사용자가 기존의 일정을 반복 일정으로 수정한다면, 반복 일정으로 변경 되어야 한다.', async () => {
     // ! 잚못된 구현: event-list로 구현해야함
-    setupMockHandlerUpdating();
+    setupEventListMockHandlerUpdating();
 
     const { user } = setup(<App />);
 
@@ -339,9 +340,9 @@ describe.only('반복 일정 표시', () => {
     await user.click(screen.getByTestId('event-submit-button'));
 
     const monthView = within(screen.getByTestId('month-view'));
-    const event = await monthView.findByLabelText('repeat-event');
-    expect(event).toBeInTheDocument();
-    const eventTitle = within(event).getByText('수정된 회의');
+    const events = await monthView.findAllByLabelText('repeat-event');
+    expect(events[0]).toBeInTheDocument();
+    const eventTitle = within(events[0]).getByText('수정된 회의');
     expect(eventTitle).toBeInTheDocument();
   });
 });
