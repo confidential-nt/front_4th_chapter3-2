@@ -131,18 +131,31 @@ function getNextMonthlyDate(currentDate: string, rule: RepeatRule, interval: num
   }
 
   if (rule === 'same-weekday-nth') {
-    const targetWeekday = date.day();
-    const nthWeek = Math.floor((date.date() - 1) / 7) + 1;
+    const targetWeekday = date.day(); // 현재 요일 (0: 일요일 ~ 6: 토요일)
+    const nthWeek = Math.floor((date.date() - 1) / 7) + 1; // 몇 번째 주인지 계산
 
-    let firstDayOfMonth = nextDate.startOf('month');
-    let firstWeekday = firstDayOfMonth.day();
-    let offset = (targetWeekday - firstWeekday + 7) % 7;
-    let targetDate = firstDayOfMonth.add(offset + (nthWeek - 1) * 7, 'day');
+    let nextDate = date.add(interval, 'month'); // interval만큼 월 이동
+    const maxDate = dayjs('2025-06-30'); // 최대 탐색 가능 날짜
 
-    if (targetDate.month() !== nextDate.month()) {
-      targetDate = nextDate.endOf('month');
+    while (nextDate.isBefore(maxDate)) {
+      const firstDayOfMonth = nextDate.date(1);
+      const firstWeekday = firstDayOfMonth.day();
+
+      // 첫 번째 해당 요일까지의 이동 거리 계산
+      let offset = (targetWeekday - firstWeekday + 7) % 7;
+      let targetDate = 1 + offset + (nthWeek - 1) * 7;
+
+      // 찾은 날짜가 유효한지 확인
+      if (targetDate <= nextDate.daysInMonth()) {
+        return nextDate.date(targetDate).format('YYYY-MM-DD'); // 유효한 날짜를 찾으면 반환
+      }
+
+      // 존재하지 않으면 다음 달로 건너뛰기
+      nextDate = nextDate.add(1, 'month');
     }
-    return targetDate.format('YYYY-MM-DD');
+
+    // 2025-06-30을 초과하면 마지막 날짜 반환
+    return maxDate.format('YYYY-MM-DD');
   }
 
   if (rule === 'last-weekday') {
