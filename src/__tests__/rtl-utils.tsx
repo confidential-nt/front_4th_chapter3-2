@@ -3,10 +3,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent, { UserEvent } from '@testing-library/user-event';
 import { ReactElement } from 'react';
 
-import { Event, RepeatInfo, RepeatType } from '../types';
+import { Event } from '../types';
 
+type Setup = (element: ReactElement) => any;
 // ! Hard 여기 제공 안함
-export const setup = (element: ReactElement) => {
+export const setup: Setup = (element: ReactElement) => {
   const user = userEvent.setup();
 
   return { ...render(<ChakraProvider>{element}</ChakraProvider>), user }; // ? Med: 왜 ChakraProvider로 감싸는지 물어보자

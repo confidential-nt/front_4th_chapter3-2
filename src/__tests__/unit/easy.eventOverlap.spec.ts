@@ -39,7 +39,7 @@ describe('convertEventToDateRange', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     const result = convertEventToDateRange(event);
@@ -57,7 +57,7 @@ describe('convertEventToDateRange', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     const result = convertEventToDateRange(event);
@@ -75,7 +75,7 @@ describe('convertEventToDateRange', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     const result = convertEventToDateRange(event);
@@ -95,7 +95,7 @@ describe('isOverlapping', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     const event2: Event = {
@@ -107,7 +107,7 @@ describe('isOverlapping', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     expect(isOverlapping(event1, event2)).toBe(true);
@@ -123,7 +123,7 @@ describe('isOverlapping', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     const event2: Event = {
@@ -135,7 +135,7 @@ describe('isOverlapping', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     expect(isOverlapping(event1, event2)).toBe(false);
@@ -153,7 +153,7 @@ describe('findOverlappingEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
     {
@@ -165,7 +165,7 @@ describe('findOverlappingEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
     {
@@ -177,7 +177,7 @@ describe('findOverlappingEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
   ];
@@ -192,7 +192,7 @@ describe('findOverlappingEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     const result = findOverlappingEvents(newEvent, baseEvents);
@@ -209,7 +209,7 @@ describe('findOverlappingEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     };
     const result = findOverlappingEvents(newEvent, baseEvents);

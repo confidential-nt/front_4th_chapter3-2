@@ -57,7 +57,7 @@ it('정의된 이벤트 정보를 기준으로 적절하게 저장이 된다', a
     description: '새로운 팀 미팅',
     location: '회의실 A',
     category: '업무',
-    repeat: { type: 'none', interval: 0 },
+    repeat: { type: 'none', interval: 0, rule: 'normal' },
     notificationTime: 5,
   };
 
@@ -82,7 +82,7 @@ it("새로 정의된 'title', 'endTime' 기준으로 적절하게 일정이 업�
     description: '기존 팀 미팅',
     location: '회의실 B',
     category: '업무',
-    repeat: { type: 'none', interval: 0 },
+    repeat: { type: 'none', interval: 0, rule: 'normal' },
     notificationTime: 10,
     title: '수정된 회의',
     endTime: '11:00',
@@ -144,7 +144,7 @@ it("존재하지 않는 이벤트 수정 시 '일정 저장 실패'라는 토스
     description: '이 이벤트는 존재하지 않습니다',
     location: '어딘가',
     category: '기타',
-    repeat: { type: 'none', interval: 0 },
+    repeat: { type: 'none', interval: 0, rule: 'normal' },
     notificationTime: 10,
   };
 

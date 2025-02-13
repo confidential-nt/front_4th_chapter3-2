@@ -1,5 +1,14 @@
+import dayjs from 'dayjs';
+import isLeapYearDayJS from 'dayjs/plugin/isLeapYear';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isLeapYearDayJS);
+
 import { Event, EventForm, RepeatRule } from '../types';
-import { addDays, addWeeks, formatDate, getWeekDates, isDateInRange } from './dateUtils';
+import { formatDate, getWeekDates, isDateInRange } from './dateUtils';
 
 function filterEventsByDateRange(events: Event[], start: Date, end: Date): Event[] {
   return events.filter((event) => {
@@ -55,28 +64,42 @@ export function getRepeatEvents(event: Event | EventForm) {
   }
 
   const repeatEvents = [];
-  let eventDate = new Date(event.date); // 시작 날짜
+  let eventDate = dayjs(event.date); // 시작 날짜를 dayjs 객체로 변경
 
-  while (eventDate <= new Date(event.repeat.endDate ? event.repeat.endDate : '2025-06-30')) {
+  while (eventDate.isSameOrBefore(dayjs(event.repeat.endDate || '2025-06-30'))) {
     repeatEvents.push({
       ...event,
-      date: formatDate(eventDate), // 반복된 날짜 설정
+      date: eventDate.format('YYYY-MM-DD'), // 반복된 날짜 설정
     });
 
     // 반복 주기에 따라 다음 날짜 계산
     if (event.repeat.type === 'weekly') {
-      eventDate = addWeeks(eventDate, event.repeat.interval);
-      // new
+      eventDate = eventDate.add(event.repeat.interval, 'week');
     } else if (event.repeat.type === 'monthly') {
-      eventDate = new Date(
-        getNextMonthlyDate(formatDate(eventDate), event.repeat.rule, event.repeat.interval)
+      const nextDateStr = getNextMonthlyDate(
+        eventDate.format('YYYY-MM-DD'),
+        event.repeat.rule,
+        event.repeat.interval
       );
+      const nextDate = dayjs(nextDateStr);
+
+      if (nextDate.isSame(eventDate)) {
+        console.error(
+          '무한 루프 방지: 다음 날짜가 현재 날짜와 동일함',
+          nextDate.format('YYYY-MM-DD')
+        );
+        break;
+      }
+      eventDate = nextDate;
     } else if (event.repeat.type === 'daily') {
-      eventDate = addDays(eventDate, event.repeat.interval);
+      eventDate = eventDate.add(event.repeat.interval, 'day');
     } else {
-      eventDate = new Date(
-        getNextYearlyDate(formatDate(eventDate), event.repeat.rule, event.repeat.interval)
+      const nextDateStr = getNextYearlyDate(
+        eventDate.format('YYYY-MM-DD'),
+        event.repeat.rule,
+        event.repeat.interval
       );
+      eventDate = dayjs(nextDateStr);
     }
   }
 
@@ -84,59 +107,53 @@ export function getRepeatEvents(event: Event | EventForm) {
 }
 
 function getNextMonthlyDate(currentDate: string, rule: RepeatRule, interval: number): string {
-  const date = new Date(currentDate);
-  let nextDate = new Date(date);
-  nextDate.setMonth(nextDate.getMonth() + interval); // interval을 먼저 적용
+  let date = dayjs(currentDate); // Day.js 객체로 변환
+  let nextDate = date.add(interval, 'month');
 
   if (rule === 'normal') {
-    // 날짜를 먼저 설정한 후 월 비교
-    nextDate.setDate(date.getDate());
-
-    // 다음 달이 정상적으로 반영되지 않았을 경우 (날짜가 조정되어 달이 바뀐 경우)
-    if (nextDate.getMonth() !== (date.getMonth() + interval) % 12) {
-      // 다음 달로 조정하여 유효한 날짜를 찾음
-      while (nextDate.getMonth() !== (date.getMonth() + interval) % 12) {
-        nextDate.setMonth(nextDate.getMonth() + 1);
+    if (date.date() === 31) {
+      // 현재 날짜가 31일이면 다음 달부터 31일을 찾고 없으면 말일로 설정
+      while (nextDate.date() !== 31) {
+        nextDate = nextDate.add(1, 'month').endOf('month');
+        if (nextDate.isAfter('2025-06-30')) break;
+      }
+    } else {
+      // 날짜가 존재하지 않으면 다음 달로 건너뛰기
+      while (nextDate.date() !== date.date()) {
+        nextDate = nextDate.add(1, 'month');
+        if (nextDate.isAfter('2025-06-30')) break;
       }
     }
-
-    return formatDate(nextDate);
   }
 
   if (rule === 'last-day') {
-    nextDate.setMonth(nextDate.getMonth() + 1); // interval을 적용한 다음 달
-    nextDate.setDate(0); // 마지막 날
-    return formatDate(nextDate);
+    return nextDate.endOf('month').format('YYYY-MM-DD');
   }
 
   if (rule === 'same-weekday-nth') {
-    const targetWeekday = date.getDay(); // 현재 요일 (0~6)
-    const nthWeek = Math.floor((date.getDate() - 1) / 7) + 1; // 몇 번째 주인지
+    const targetWeekday = date.day();
+    const nthWeek = Math.floor((date.date() - 1) / 7) + 1;
 
-    while (true) {
-      const firstDay = new Date(nextDate.getFullYear(), nextDate.getMonth(), 1);
-      const firstWeekday = firstDay.getDay();
+    let firstDayOfMonth = nextDate.startOf('month');
+    let firstWeekday = firstDayOfMonth.day();
+    let offset = (targetWeekday - firstWeekday + 7) % 7;
+    let targetDate = firstDayOfMonth.add(offset + (nthWeek - 1) * 7, 'day');
 
-      let offset = (targetWeekday - firstWeekday + 7) % 7;
-      let targetDate = 1 + offset + (nthWeek - 1) * 7;
-      let testDate = new Date(nextDate.getFullYear(), nextDate.getMonth(), targetDate);
-
-      if (testDate.getMonth() === nextDate.getMonth()) {
-        return formatDate(testDate);
-      }
-      nextDate.setMonth(nextDate.getMonth() + interval); // interval을 고려하여 이동
+    if (targetDate.month() !== nextDate.month()) {
+      targetDate = nextDate.endOf('month');
     }
+    return targetDate.format('YYYY-MM-DD');
   }
 
   if (rule === 'last-weekday') {
-    nextDate.setMonth(nextDate.getMonth() + 1); // interval을 반영한 다음 달
-    nextDate.setDate(0); // 마지막 날
-
-    while (nextDate.getDay() !== date.getDay()) {
-      nextDate.setDate(nextDate.getDate() - 1);
+    let lastDayOfMonth = nextDate.endOf('month');
+    while (lastDayOfMonth.day() !== date.day()) {
+      lastDayOfMonth = lastDayOfMonth.subtract(1, 'day');
     }
-    return formatDate(nextDate);
+    return lastDayOfMonth.format('YYYY-MM-DD');
   }
+
+  return nextDate.format('YYYY-MM-DD');
 }
 export function getNextYearlyDate(currentDate: string, rule: RepeatRule, interval: number): string {
   const date = new Date(currentDate);

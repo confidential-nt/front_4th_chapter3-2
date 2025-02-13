@@ -109,6 +109,7 @@ export function formatDate(currentDate: Date, day?: number) {
   ].join('-');
 }
 
+// TDD 때문에 단순한 함수 -> 복잡한 일을 하는 함수 빌드업이 가능했는지도.
 export function getRepeatRules(
   date: Date,
   frequency: 'monthly' | 'yearly'
@@ -119,21 +120,9 @@ export function getRepeatRules(
   const dayOfWeek = date.getDay(); // 0 (일) ~ 6 (토)
 
   const isLeapYear = (y: number) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
-  const lastDay = new Date(year, month + 1, 0).getDate();
 
   const weekOfMonth = Math.floor((day - 1) / 7) + 1; // 몇 번째 주인지
   const weekdays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-
-  // 마지막 해당 요일 찾기
-  function getLastWeekdayOfMonth(m: number, y: number, targetDayOfWeek: number): number {
-    let lastDate = new Date(y, m + 1, 0); // 해당 월의 마지막 날
-    while (lastDate.getDay() !== targetDayOfWeek) {
-      lastDate.setDate(lastDate.getDate() - 1);
-    }
-    return lastDate.getDate();
-  }
-
-  const lastWeekday = getLastWeekdayOfMonth(month, year, dayOfWeek);
 
   // 윤년 2월 29일 처리
   if (month === 1 && day === 29 && isLeapYear(year)) {

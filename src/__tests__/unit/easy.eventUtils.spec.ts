@@ -12,7 +12,7 @@ describe('getFilteredEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
     {
@@ -24,7 +24,7 @@ describe('getFilteredEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
     {
@@ -36,7 +36,7 @@ describe('getFilteredEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 0,
     },
   ];
@@ -87,7 +87,7 @@ describe('getFilteredEvents', () => {
         description: '',
         location: '',
         category: '',
-        repeat: { type: 'none', interval: 0 },
+        repeat: { type: 'none', interval: 0, rule: 'normal' },
         notificationTime: 0,
       },
       ...events,
@@ -100,7 +100,7 @@ describe('getFilteredEvents', () => {
         description: '',
         location: '',
         category: '',
-        repeat: { type: 'none', interval: 0 },
+        repeat: { type: 'none', interval: 0, rule: 'normal' },
         notificationTime: 0,
       },
     ];
@@ -126,7 +126,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       })
     ).toEqual([
@@ -138,7 +138,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       },
       {
@@ -149,7 +149,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       },
       {
@@ -160,7 +160,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       },
       {
@@ -171,7 +171,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       },
       {
@@ -182,7 +182,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       },
       {
@@ -193,7 +193,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       },
       {
@@ -204,7 +204,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       },
       {
@@ -215,13 +215,13 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20' },
+        repeat: { type: 'daily', interval: 1, endDate: '2024-10-20', rule: 'normal' },
         notificationTime: 10,
       },
     ]);
   });
 
-  it('2024-03-31 부터 시작하는 반복 일정이 2025-06-30 까지 "normal" 옵션으로 진행될 경우 총 7개의 이벤트가 생성되어야한다.', () => {
+  it('2024-03-31 부터 시작하는 반복 일정이 2024-06-30 까지 "normal" 옵션으로 매달 진행될 경우 총 2개의 이벤트가 생성되어야한다.', () => {
     expect(
       getRepeatEvents({
         title: '기존 회의',
@@ -231,7 +231,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'monthly', interval: 1, rule: 'normal' },
+        repeat: { type: 'monthly', interval: 1, rule: 'normal', endDate: '2024-06-30' },
         notificationTime: 10,
       })
     ).toEqual([
@@ -243,11 +243,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'normal',
-        },
+        repeat: { type: 'monthly', interval: 1, rule: 'normal', endDate: '2024-06-30' },
         notificationTime: 10,
       },
       {
@@ -258,92 +254,13 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'normal',
-        },
-        notificationTime: 10,
-      },
-      {
-        title: '기존 회의',
-        date: '2024-07-31',
-        startTime: '09:00',
-        endTime: '10:00',
-        description: '기존 팀 미팅',
-        location: '회의실 B',
-        category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'normal',
-        },
-        notificationTime: 10,
-      },
-      {
-        title: '기존 회의',
-        date: '2024-10-31',
-        startTime: '09:00',
-        endTime: '10:00',
-        description: '기존 팀 미팅',
-        location: '회의실 B',
-        category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'normal',
-        },
-        notificationTime: 10,
-      },
-      {
-        title: '기존 회의',
-        date: '2024-12-31',
-        startTime: '09:00',
-        endTime: '10:00',
-        description: '기존 팀 미팅',
-        location: '회의실 B',
-        category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'normal',
-        },
-        notificationTime: 10,
-      },
-      {
-        title: '기존 회의',
-        date: '2025-03-31',
-        startTime: '09:00',
-        endTime: '10:00',
-        description: '기존 팀 미팅',
-        location: '회의실 B',
-        category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'normal',
-        },
-        notificationTime: 10,
-      },
-      {
-        title: '기존 회의',
-        date: '2025-05-31',
-        startTime: '09:00',
-        endTime: '10:00',
-        description: '기존 팀 미팅',
-        location: '회의실 B',
-        category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'normal',
-        },
+        repeat: { type: 'monthly', interval: 1, rule: 'normal', endDate: '2024-06-30' },
         notificationTime: 10,
       },
     ]);
   });
 
-  it('2024-02-29 부터 시작하는 반복 일정이 2025-06-30 까지 "last-day" 옵션으로 진행될 경우 총 10개의 이벤트가 생성되어야한다.', () => {
+  it('2024-02-29 부터 시작하는 반복 일정이 2024-06-30 까지 매달 "last-day" 옵션으로 진행될 경우 총 5개의 이벤트가 생성되어야한다.', () => {
     expect(
       getRepeatEvents({
         title: '기존 회의',
@@ -353,7 +270,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: { type: 'monthly', interval: 1, rule: 'last-day' },
+        repeat: { type: 'monthly', interval: 1, rule: 'last-day', endDate: '2024-06-30' },
         notificationTime: 10,
       })
     ).toEqual([
@@ -365,11 +282,7 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'monthly', interval: 1, rule: 'last-day', endDate: '2024-06-30' },
         notificationTime: 10,
       },
       {
@@ -380,11 +293,18 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'monthly', interval: 1, rule: 'last-day', endDate: '2024-06-30' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-04-30',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-day', endDate: '2024-06-30' },
         notificationTime: 10,
       },
       {
@@ -395,116 +315,85 @@ describe('getRepeatEvents', () => {
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'monthly', interval: 1, rule: 'last-day', endDate: '2024-06-30' },
         notificationTime: 10,
       },
       {
         title: '기존 회의',
-        date: '2024-07-31',
+        date: '2024-06-30',
         startTime: '09:00',
         endTime: '10:00',
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'monthly', interval: 1, rule: 'last-day', endDate: '2024-06-30' },
         notificationTime: 10,
       },
-      {
+    ]);
+  });
+
+  it('2024-02-29 부터 시작하는 반복 일정이 2025-06-30 까지 매년 "normal" 옵션으로 진행될 경우 총 1개의 이벤트가 생성되어야한다.', () => {
+    expect(
+      getRepeatEvents({
         title: '기존 회의',
-        date: '2024-08-31',
+        date: '2024-02-29',
         startTime: '09:00',
         endTime: '10:00',
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'yearly', interval: 1, rule: 'normal' },
         notificationTime: 10,
-      },
+      })
+    ).toEqual([
       {
         title: '기존 회의',
-        date: '2024-10-31',
+        date: '2024-02-29',
         startTime: '09:00',
         endTime: '10:00',
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'yearly', interval: 1, rule: 'normal' },
         notificationTime: 10,
       },
-      {
+    ]);
+  });
+
+  it('2024-02-29 부터 시작하는 반복 일정이 2025-06-30 까지 매년 "last-day" 옵션으로 진행될 경우 총 2개의 이벤트가 생성되어야한다.', () => {
+    expect(
+      getRepeatEvents({
         title: '기존 회의',
-        date: '2024-12-31',
+        date: '2024-02-29',
         startTime: '09:00',
         endTime: '10:00',
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'yearly', interval: 1, rule: 'last-day' },
         notificationTime: 10,
-      },
+      })
+    ).toEqual([
       {
         title: '기존 회의',
-        date: '2025-01-31',
+        date: '2024-02-29',
         startTime: '09:00',
         endTime: '10:00',
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'yearly', interval: 1, rule: 'last-day' },
         notificationTime: 10,
       },
       {
         title: '기존 회의',
-        date: '2025-03-31',
+        date: '2025-02-28',
         startTime: '09:00',
         endTime: '10:00',
         description: '기존 팀 미팅',
         location: '회의실 B',
         category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
-        notificationTime: 10,
-      },
-      {
-        title: '기존 회의',
-        date: '2025-05-31',
-        startTime: '09:00',
-        endTime: '10:00',
-        description: '기존 팀 미팅',
-        location: '회의실 B',
-        category: '업무',
-        repeat: {
-          type: 'monthly',
-          interval: 1,
-          rule: 'last-day',
-        },
+        repeat: { type: 'yearly', interval: 1, rule: 'last-day' },
         notificationTime: 10,
       },
     ]);

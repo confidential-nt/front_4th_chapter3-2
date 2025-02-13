@@ -12,7 +12,7 @@ describe('getUpcomingEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 10,
     },
     {
@@ -24,7 +24,7 @@ describe('getUpcomingEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 30,
     },
     {
@@ -36,7 +36,7 @@ describe('getUpcomingEvents', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 60,
     },
   ];
@@ -83,7 +83,7 @@ describe('createNotificationMessage', () => {
       description: '',
       location: '',
       category: '',
-      repeat: { type: 'none', interval: 0 },
+      repeat: { type: 'none', interval: 0, rule: 'normal' },
       notificationTime: 15,
     };
     const message = createNotificationMessage(event);
