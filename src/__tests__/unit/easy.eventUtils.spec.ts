@@ -398,4 +398,150 @@ describe('getRepeatEvents', () => {
       },
     ]);
   });
+
+  it('2024-02-29 부터 시작하는 반복 일정이 2024-08-31 까지 매월 "last-weekday" 옵션으로 진행될 경우 총 7개의 이벤트가 생성되어야한다.', () => {
+    expect(
+      getRepeatEvents({
+        title: '기존 회의',
+        date: '2024-02-29',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-weekday', endDate: '2024-08-31' },
+        notificationTime: 10,
+      })
+    ).toEqual([
+      {
+        title: '기존 회의',
+        date: '2024-02-29',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-weekday', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-03-28',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-weekday', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-04-25',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-weekday', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-05-30',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-weekday', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-06-27',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-weekday', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-07-25',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-weekday', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+      {
+        title: '기존 회의',
+        date: '2024-08-29',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'last-weekday', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+    ]);
+  });
+
+  it('2024-02-29 부터 시작하는 반복 일정이 2024-08-31 까지 매월 "same-weekday-nth" 옵션으로 진행될 경우 총 2개의 이벤트가 생성되어야한다.', () => {
+    expect(
+      getRepeatEvents({
+        title: '기존 회의',
+        date: '2024-02-29',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'same-weekday-nth', endDate: '2024-08-31' },
+        notificationTime: 10,
+      })
+    ).toEqual([
+      {
+        title: '기존 회의',
+        date: '2024-02-29',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'same-weekday-nth', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+
+      {
+        title: '기존 회의',
+        date: '2024-05-30',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'same-weekday-nth', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+
+      {
+        title: '기존 회의',
+        date: '2024-08-29',
+        startTime: '09:00',
+        endTime: '10:00',
+        description: '기존 팀 미팅',
+        location: '회의실 B',
+        category: '업무',
+        repeat: { type: 'monthly', interval: 1, rule: 'same-weekday-nth', endDate: '2024-08-31' },
+        notificationTime: 10,
+      },
+    ]);
+  });
 });
