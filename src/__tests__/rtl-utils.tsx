@@ -5,6 +5,7 @@ import { ReactElement } from 'react';
 
 import { Event } from '../types';
 
+// eslint-disable-next-line no-unused-vars
 type Setup = (element: ReactElement) => any;
 // ! Hard 여기 제공 안함
 export const setup: Setup = (element: ReactElement) => {
